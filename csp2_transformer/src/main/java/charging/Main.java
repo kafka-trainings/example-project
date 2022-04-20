@@ -14,11 +14,15 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
-public class CSP2Transformer {
+public class Main {
     public static void main(final String[] args) throws IOException {
 
         final Properties props = new Properties();
-        props.load(new FileReader("csp2_transformer.properties"));
+        String configFile = "csp2_transformer.properties";
+        if(args.length == 1) {
+            configFile = args[0];
+        }
+        props.load(new FileReader(configFile));
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 

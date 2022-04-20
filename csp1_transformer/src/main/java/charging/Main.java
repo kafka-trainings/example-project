@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-public class CSPTransformer {
+public class Main {
     public static void main(final String[] args) throws IOException {
 
         final Properties consumerProps = new Properties();

@@ -9,10 +9,14 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
-public class CSP1Consumer {
+public class Main {
     public static void main(final String[] args) throws IOException {
         final Properties props = new Properties();
-        props.load(new FileReader("csp1_consumer.properties"));
+        String configFile = "csp1_consumer.properties";
+        if(args.length == 1) {
+            configFile = args[0];
+        }
+        props.load(new FileReader(configFile));
         // What do you need to configure here?
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CSP1TransactionDeserializer.class);

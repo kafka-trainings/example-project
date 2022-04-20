@@ -16,11 +16,15 @@ import java.util.concurrent.CountDownLatch;
 
 import static charging.Server.*;
 
-public class Dashboard {
+public class Main {
     public static void main(final String[] args) throws IOException {
 
         final Properties props = new Properties();
-        props.load(new FileReader("dashboard.properties"));
+        String configFile = "dashboard.properties";
+        if(args.length == 1) {
+            configFile = args[0];
+        }
+        props.load(new FileReader(configFile));
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         int port = Integer.parseInt(props.getProperty("web.port"));

@@ -11,10 +11,14 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-public class CSP2Producer {
+public class Main {
     public static void main(final String[] args) throws IOException {
         final Properties props = new Properties();
-        props.load(new FileReader("csp2_producer.properties"));
+        String configFile = "csp2_producer.properties";
+        if(args.length == 1) {
+            configFile = args[0];
+        }
+        props.load(new FileReader(configFile));
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, CSP2TransactionSerializer.class);
 

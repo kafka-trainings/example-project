@@ -2,14 +2,12 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.3"
-    }
 }
 
 plugins {
     id "java"
     id "idea"
+id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 sourceCompatibility = "1.17"
@@ -40,5 +38,10 @@ idea {
     module {
         downloadJavadoc = true
         downloadSources = true
+    }
+}
+shadowJar {
+    manifest {
+        attributes 'Main-Class': 'charging.Main'
     }
 }
