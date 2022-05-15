@@ -20,14 +20,18 @@ public class Main {
     public static void main(final String[] args) throws IOException {
 
         final Properties consumerProps = new Properties();
-        consumerProps.load(new FileReader("csp1_transformer.properties"));
+        final Properties producerProps = new Properties();
+        String configFile = "csp1_transformer.properties";
+        if(args.length == 1) {
+            configFile = args[0];
+        }
+        consumerProps.load(new FileReader(configFile));
+        producerProps.load(new FileReader(configFile));
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CSP1TransactionDeserializer.class);
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
-        final Properties producerProps = new Properties();
-        producerProps.load(new FileReader("csp1_transformer.properties"));
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, TransactionSerializer.class);
 
