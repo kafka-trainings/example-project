@@ -1,0 +1,111 @@
+version: "2"
+services:
+  csp1_producer:
+    build: ./csp1_producer
+    volumes:
+      - ./csp1_producer.properties:/app/app.properties
+    depends_on:
+      - broker
+  csp1_consumer:
+    build: ./csp1_consumer
+    volumes:
+      - ./csp1_consumer.properties:/app/app.properties
+    depends_on:
+      - broker
+  csp1_transformer:
+    build: ./csp1_transformer
+    volumes:
+      - ./csp1_transformer.properties:/csp1_transformer.properties
+    depends_on:
+      - broker
+
+  csp2_producer:
+    build: ./csp2_producer
+    volumes:
+      - ./csp2_producer.properties:/app/app.properties
+    depends_on:
+      - broker
+  csp2_transformer:
+    build: ./csp2_transformer
+    volumes:
+      - ./csp2_transformer.properties:/app/app.properties
+    depends_on:
+      - broker
+  dashboard:
+    build: ./dashboard
+    volumes:
+      - ./dashboard.properties:/app/app.properties
+    depends_on:
+      - broker
+      - csp1_producer
+      - csp2_producer
+      - csp1_transformer
+      - csp2_transformer
+    ports:
+      - "9999:9999"
+  zookeeper:
+    image: solsson/kafka:latest
+    entrypoint: ./bin/zookeeper-server-start.sh
+    command:
+      - ./config/zookeeper.properties
+  broker:
+    image: solsson/kafka:latest
+    entrypoint: ./bin/kafka-server-start.sh
+    volumes:
+      - ./broker.properties:/server.properties
+    depends_on:
+      - zookeeper
+    command:
+      - /server.properties
+    ports:
+      - "9092:9093"
+  connect:
+    build: ./connect
+    volumes:
+      - ./csp2_customerdb/csp2db.sqlite:/csp2db.sqlite
+      - ./connect-distributed.properties:/connect-distributed.properties
+    ports:
+      - "8083:8083"
+    depends_on:
+      - broker
+    command:
+      - /connect-distributed.properties
+    entrypoint: ./bin/connect-distributed.sh
+
+  ksqldb-server:
+    image: confluentinc/ksqldb-server:0.26.0
+    hostname: ksqldb-server
+    container_name: ksqldb-server
+    depends_on:
+      - broker
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_LISTENERS: http://0.0.0.0:8088
+      KSQL_BOOTSTRAP_SERVERS: broker:9092
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+
+  ksqldb-cli:
+    image: confluentinc/ksqldb-cli:0.26.0
+    container_name: ksqldb-cli
+    depends_on:
+      - broker
+      - ksqldb-server
+    entrypoint: /bin/sh
+    tty: true
+  create-connector:
+    image: curlimages/curl:7.83.1
+    volumes:
+      - ./connect/source_connector.json:/source_connector.json
+    depends_on:
+      - connect
+    entrypoint: sh
+    command:
+      - "-c"
+      - 'sleep 10 && curl -s -X POST -H "Content-Type: application/json" --data @/source_connector.json http://connect:8083/connectors'
+  curl:
+    image: curlimages/curl:7.83.1
+    entrypoint: sleep
+    command:
+      - "9999"
