@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 public class Main {
     public static void main(final String[] args) throws IOException {
         final Properties props = new Properties();
-        String configFile = "csp1_consumer.properties";
-        if(args.length == 1) {
+        String configFile = "csp1_producer.properties";
+        if (args.length == 1) {
             configFile = args[0];
         }
         props.load(new FileReader(configFile));
@@ -31,7 +31,9 @@ public class Main {
             toGreet.forEach(greeting -> {
                 ProducerRecord<String, CSP1Transaction> producerRecord = new ProducerRecord<>(TOPIC, greeting);
                 producer.send(producerRecord);
-                System.out.println("Produced transaction for customer " + greeting.customerId);
+                if (msgsPerSec <= 2) {
+                    System.out.println("Produced transaction for customer " + greeting.customerId);
+                }
             });
         }
     }

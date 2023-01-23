@@ -4,37 +4,59 @@ services:
     build: ./csp1_producer
     volumes:
       - ./csp1_producer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     depends_on:
       - broker
+    ports:
+      - "3011:3011"
   csp1_consumer:
     build: ./csp1_consumer
     volumes:
       - ./csp1_consumer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     depends_on:
       - broker
+    ports:
+      - "3012:3012"
   csp1_transformer:
     build: ./csp1_transformer
     volumes:
-      - ./csp1_transformer.properties:/csp1_transformer.properties
+      - ./csp1_transformer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     depends_on:
       - broker
+    ports:
+      - "3013:3013"
 
   csp2_producer:
     build: ./csp2_producer
     volumes:
       - ./csp2_producer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
+    ports:
+      - "3021:3021"
     depends_on:
       - broker
   csp2_transformer:
     build: ./csp2_transformer
     volumes:
       - ./csp2_transformer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
+    ports:
+      - "3022:3022"
     depends_on:
       - broker
   dashboard:
     build: ./dashboard
     volumes:
       - ./dashboard.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     depends_on:
       - broker
       - csp1_producer
@@ -43,6 +65,7 @@ services:
       - csp2_transformer
     ports:
       - "9999:9999"
+      - "3031:3031"
   zookeeper:
     image: solsson/kafka:latest
     entrypoint: ./bin/zookeeper-server-start.sh
@@ -64,6 +87,8 @@ services:
     volumes:
       - ./csp2_customerdb/csp2db.sqlite:/csp2db.sqlite
       - ./connect-distributed.properties:/connect-distributed.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     ports:
       - "8083:8083"
     depends_on:

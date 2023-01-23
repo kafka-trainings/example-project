@@ -8,4 +8,4 @@ RUN gradle shadowJar --no-daemon
 FROM openjdk:17
 RUN mkdir /app
 COPY --from=build /src/build/libs/*.jar /app/application.jar
-ENTRYPOINT ["java", "-jar", "/app/application.jar", "/app/app.properties"]
+ENTRYPOINT ["java", "-javaagent:/app/jmx_exporter.jar=3021:/app/jmx_exporter.yaml", "-jar", "/app/application.jar", "/app/app.properties"]
