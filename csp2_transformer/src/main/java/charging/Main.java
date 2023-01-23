@@ -27,8 +27,9 @@ public class Main {
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 
         long processingTimeMs = Long.parseLong(props.getProperty("processing.time.ms", "1"));
+        boolean logInfos = props.getProperty("app.log.infos", "true").equals("true");
 
-        final Topology topology = getTopology(props, processingTimeMs);
+        final Topology topology = getTopology(props, processingTimeMs, logInfos);
         System.out.println("you can paste the topology into this site for a vizualization: https://zz85.github.io/kafka-streams-viz/");
         System.out.println(topology.describe());
         final KafkaStreams streams = new KafkaStreams(topology, props);
@@ -61,7 +62,7 @@ public class Main {
         System.exit(0);
     }
 
-    private static Topology getTopology(Properties props, long processingTimeMs) {
+    private static Topology getTopology(Properties props, long processingTimeMs, boolean logInfos) {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, CSP2Transaction> cspTransactions = builder.stream(props.getProperty("csp2.transactions.topic"),
                 Consumed.with(Serdes.String(), JSONSerdes.CSP2TransactionSerde()));
@@ -84,6 +85,9 @@ public class Main {
                                 Thread.sleep(processingTimeMs);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
+                            }
+                            if(logInfos) {
+                                System.out.println("Processing message with customer ID " + transaction.customerId);
                             }
                             return new Transaction(transaction.customerId, id, transaction.whCharged / 1000, System.currentTimeMillis());
                         }

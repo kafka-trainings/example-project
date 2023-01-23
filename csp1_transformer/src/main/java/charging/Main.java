@@ -36,6 +36,7 @@ public class Main {
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, TransactionSerializer.class);
 
         long processingTimeMs = Long.parseLong(producerProps.getProperty("processing.time.ms", "1"));
+        boolean logInfos = producerProps.getProperty("app.log.infos", "true").equals("true");
 
 
         final String CSP1_TOPIC = consumerProps.getProperty("csp1.topic");
@@ -71,6 +72,9 @@ public class Main {
                         ProducerRecord<String, Transaction> transactionRecord =
                                 new ProducerRecord<>(OUTPUT_TOPIC, transaction.customerId, transaction);
                         producer.send(transactionRecord);
+                        if(logInfos) {
+                            System.out.println("Processed message for customer " + transaction.customerId);
+                        }
                     }
                     producer.sendOffsetsToTransaction(offsets, consumerGroupMetadata);
                     producer.commitTransaction();

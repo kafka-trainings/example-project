@@ -10,10 +10,10 @@ import java.util.Collections;
 import java.util.Properties;
 
 public class Main {
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException, InterruptedException {
         final Properties props = new Properties();
         String configFile = "csp1_consumer.properties";
-        if(args.length == 1) {
+        if (args.length == 1) {
             configFile = args[0];
         }
         props.load(new FileReader(configFile));
@@ -21,6 +21,8 @@ public class Main {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CSP1TransactionDeserializer.class);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        long processingTimeMs = Long.parseLong(props.getProperty("processing.time.ms", "1"));
+        boolean logInfos = props.getProperty("app.log.infos", "true").equals("true");
 
         final String TOPIC = props.getProperty("topic");
 
@@ -35,7 +37,11 @@ public class Main {
                 for (ConsumerRecord<String, CSP1Transaction> record : records) {
                     String key = record.key();
                     CSP1Transaction value = record.value();
-                    System.out.println(key + ": " + value);
+                    // "Processing" Message
+                    Thread.sleep(processingTimeMs);
+                    if (logInfos) {
+                        System.out.println(key + ": " + value);
+                    }
                 }
             }
         }

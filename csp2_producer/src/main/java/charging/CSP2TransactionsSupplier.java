@@ -12,11 +12,13 @@ public class CSP2TransactionsSupplier implements Supplier<CSP2Transaction> {
 
     private final int batchInterval;
     private final int msgsPerBatch;
+    private boolean logInfos;
     private int numMsgs = 0;
 
-    public CSP2TransactionsSupplier(int batchInterval, int msgsPerBatch) {
+    public CSP2TransactionsSupplier(int batchInterval, int msgsPerBatch, boolean logInfos) {
         this.batchInterval = batchInterval;
         this.msgsPerBatch = msgsPerBatch;
+        this.logInfos = logInfos;
     }
 
     @Override
@@ -28,7 +30,9 @@ public class CSP2TransactionsSupplier implements Supplier<CSP2Transaction> {
         transaction.whCharged = rand.nextFloat() * 100000;
         numMsgs++;
         if (numMsgs >= msgsPerBatch) {
-            System.out.println("Produced " + numMsgs + " Messages. Waiting now for the next Batch to 'arrive'");
+            if (logInfos) {
+                System.out.println("Produced " + numMsgs + " Messages. Waiting now for the next Batch to 'arrive'");
+            }
             try {
                 Thread.sleep(batchInterval * 1000L);
             } catch (InterruptedException e) {

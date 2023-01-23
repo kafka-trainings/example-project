@@ -15,7 +15,7 @@ public class Main {
     public static void main(final String[] args) throws IOException {
         final Properties props = new Properties();
         String configFile = "csp2_producer.properties";
-        if(args.length == 1) {
+        if (args.length == 1) {
             configFile = args[0];
         }
         props.load(new FileReader(configFile));
@@ -25,8 +25,9 @@ public class Main {
         final String TOPIC = props.getProperty("topic");
         int batchInterval = Integer.parseInt(props.getProperty("producer.batch_interval.s"));
         int msgsPerBatch = Integer.parseInt(props.getProperty("producer.msgs_per_batch"));
+        boolean logInfos = props.getProperty("app.log.infos", "true").equals("true");
 
-        final Stream<CSP2Transaction> toGreet = Stream.generate(new CSP2TransactionsSupplier(batchInterval, msgsPerBatch));
+        final Stream<CSP2Transaction> toGreet = Stream.generate(new CSP2TransactionsSupplier(batchInterval, msgsPerBatch, logInfos));
 
         try (Producer<String, CSP2Transaction> producer = new KafkaProducer<>(props)) {
             toGreet.forEach(greeting -> {

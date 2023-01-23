@@ -24,6 +24,7 @@ public class Main {
 
         final String TOPIC = props.getProperty("topic");
         double msgsPerSec = Double.parseDouble(props.getProperty("producer.msgs.per.sec", "1"));
+        boolean logInfos = props.getProperty("app.log.infos", "true").equals("true");
 
         final Stream<CSP1Transaction> toGreet = Stream.generate(new CSP1TransactionsSupplier(msgsPerSec));
 
@@ -31,7 +32,7 @@ public class Main {
             toGreet.forEach(greeting -> {
                 ProducerRecord<String, CSP1Transaction> producerRecord = new ProducerRecord<>(TOPIC, greeting);
                 producer.send(producerRecord);
-                if (msgsPerSec <= 2) {
+                if (logInfos) {
                     System.out.println("Produced transaction for customer " + greeting.customerId);
                 }
             });
