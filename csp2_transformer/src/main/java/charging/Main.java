@@ -19,20 +19,19 @@ public class Main {
 
         final Properties props = new Properties();
         String configFile = "csp2_transformer.properties";
-        if(args.length == 1) {
+        if (args.length == 1) {
             configFile = args[0];
         }
         props.load(new FileReader(configFile));
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 
+        long processingTimeMs = Long.parseLong(props.getProperty("processing.time.ms", "1"));
 
-        final Topology topology = getTopology(props);
+        final Topology topology = getTopology(props, processingTimeMs);
         System.out.println("you can paste the topology into this site for a vizualization: https://zz85.github.io/kafka-streams-viz/");
         System.out.println(topology.describe());
         final KafkaStreams streams = new KafkaStreams(topology, props);
-
-
 
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -50,7 +49,7 @@ public class Main {
                     StoreQueryParameters.fromNameAndType("cim-store", QueryableStoreTypes.keyValueStore()));
             System.out.println("NUMENTRIES: " + cimStore.approximateNumEntries());
             KeyValueIterator<String, String> it = cimStore.all();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 KeyValue<String, String> kv = it.next();
                 System.out.println(kv);
             }
@@ -62,12 +61,12 @@ public class Main {
         System.exit(0);
     }
 
-    private static Topology getTopology(Properties props) {
+    private static Topology getTopology(Properties props, long processingTimeMs) {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, CSP2Transaction> cspTransactions = builder.stream(props.getProperty("csp2.transactions.topic"),
                 Consumed.with(Serdes.String(), JSONSerdes.CSP2TransactionSerde()));
         GlobalKTable<Integer, String> customerIdMapping = builder.globalTable(props.getProperty("csp2.customer_id_mapping.topic"),
-                Materialized.<Integer, String, KeyValueStore<Bytes, byte[]>> as("cim-store")
+                Materialized.<Integer, String, KeyValueStore<Bytes, byte[]>>as("cim-store")
                         .withKeySerde(Serdes.Integer())
                         .withValueSerde(Serdes.String()));
         GlobalKTable<Integer, String> chargingstationIdMapping = builder.globalTable(props.getProperty("csp2.chargingstation_id_mapping.topic"),
@@ -78,10 +77,18 @@ public class Main {
                 (transaction, id) -> new CSP2TransactionWithCustomerId(id, transaction.chargingStationId, transaction.whCharged));
 
         KStream<String, Transaction> transactions = cspTransactionsWithCustomerId.join(chargingstationIdMapping,
-                (key, transactionValue) -> transactionValue.chargingStationId,
-                (transaction, id) -> new Transaction(transaction.customerId, id, transaction.whCharged / 1000, System.currentTimeMillis())
-        )
-                        .selectKey((key, value) -> value.customerId);
+                        (key, transactionValue) -> transactionValue.chargingStationId,
+                        (transaction, id) -> {
+                            // "Processing" Message
+                            try {
+                                Thread.sleep(processingTimeMs);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return new Transaction(transaction.customerId, id, transaction.whCharged / 1000, System.currentTimeMillis());
+                        }
+                )
+                .selectKey((key, value) -> value.customerId);
         transactions.to(props.getProperty("output.topic"), Produced.with(Serdes.String(), JSONSerdes.TransactionSerde()));
 
         return builder.build();

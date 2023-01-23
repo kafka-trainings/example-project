@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class Main {
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException, InterruptedException {
 
         final Properties consumerProps = new Properties();
         final Properties producerProps = new Properties();
@@ -34,6 +34,8 @@ public class Main {
 
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, TransactionSerializer.class);
+
+        long processingTimeMs = Long.parseLong(producerProps.getProperty("processing.time.ms", "1"));
 
 
         final String CSP1_TOPIC = consumerProps.getProperty("csp1.topic");
@@ -62,6 +64,9 @@ public class Main {
                         transaction.customerId = "CSP1:" + csp1Transaction.customerId;
                         transaction.kwhCharged = csp1Transaction.kwhCharged;
                         transaction.timestamp = record.timestamp();
+
+                        // "Processing" Message
+                        Thread.sleep(processingTimeMs);
 
                         ProducerRecord<String, Transaction> transactionRecord =
                                 new ProducerRecord<>(OUTPUT_TOPIC, transaction.customerId, transaction);
