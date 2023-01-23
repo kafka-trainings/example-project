@@ -4,29 +4,41 @@ services:
     build: ./csp1_producer
     volumes:
       - ./csp1_producer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     network_mode: host
   csp1_consumer:
     build: ./csp1_consumer
     volumes:
       - ./csp1_consumer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     network_mode: host
   csp1_transformer:
     build: ./csp1_transformer
     volumes:
       - ./csp1_transformer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     network_mode: host
   csp2_producer:
     build: ./csp2_producer
     volumes:
       - ./csp2_producer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     network_mode: host
   csp2_transformer:
     build: ./csp2_transformer
     volumes:
       - ./csp2_transformer.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     network_mode: host
   dashboard:
     build: ./dashboard
     volumes:
       - ./dashboard.properties:/app/app.properties
+      - ./jmx_exporter.jar:/app/jmx_exporter.jar
+      - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     network_mode: host
