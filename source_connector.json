@@ -2,7 +2,7 @@
   "name": "csp2-source-connector",
   "config": {
     "name": "csp2-source-connector",
-    "connection.url": "jdbc:sqlite:///home/user/example-project/csp2_customerdb/csp2db.sqlite",
+    "connection.url": "jdbc:sqlite:///csp2db.sqlite",
     "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
     "mode": "incrementing",
     "incrementing.column.name": "csp2_id",

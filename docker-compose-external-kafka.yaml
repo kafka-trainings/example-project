@@ -42,3 +42,9 @@ services:
       - ./jmx_exporter.jar:/app/jmx_exporter.jar
       - ./jmx_exporter.yaml:/app/jmx_exporter.yaml
     network_mode: host
+  connect:
+    build: ./connect
+    volumes:
+      - ./connect-distributed.properties:/connect-distributed.properties
+      - ./csp2_customerdb/csp2db.sqlite:/csp2db.sqlite
+    network_mode: host
