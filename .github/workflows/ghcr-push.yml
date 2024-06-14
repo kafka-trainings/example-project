@@ -41,7 +41,7 @@ jobs:
             echo "Building $IMAGE_NAME:$VERSION"
             echo VERSION=$VERSION
             
-            cd $DIR
+            cd ~/$DIR
             docker build . --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
             docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
             echo "Pushing $IMAGE_ID:$VERSION"
