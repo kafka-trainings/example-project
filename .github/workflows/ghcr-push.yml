@@ -11,7 +11,7 @@ on:
     tags:
       - v*
 env:
-  PROJECT: charging_station_project
+  PROJECT: example-project
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -32,16 +32,18 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Build and push csp1_producer
         run: |
-          DIR=csp1_producer
-          IMAGE_NAME=$PROJECT/$DIR
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          [ "$VERSION" == "main" ] && VERSION=latest
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          
-          cd $DIR
-          docker build . --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+          for DIR in csp1_producer csp1_consumer csp1_transformer csp2_producer csp2_transformer dashboard ;do
+            IMAGE_NAME=$PROJECT/$DIR
+            IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+            VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+            [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+            [ "$VERSION" == "main" ] && VERSION=latest
+            echo "Building $IMAGE_NAME:$VERSION"
+            echo VERSION=$VERSION
+            
+            cd $DIR
+            docker build . --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+            echo "Pushing $IMAGE_ID:$VERSION"
+            docker push $IMAGE_ID:$VERSION
+          done
