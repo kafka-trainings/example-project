@@ -33,7 +33,8 @@ jobs:
       - name: Build and push csp1_producer
         run: |
           cd csp1_producer
-          for DIR in csp1_producer csp1_consumer csp1_transformer csp2_producer csp2_transformer dashboard ;do
+          # todo: csp2_transformer
+          for DIR in csp1_producer csp1_consumer csp1_transformer csp2_producer  dashboard ;do
             IMAGE_NAME=$PROJECT/$DIR
             IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
             VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
