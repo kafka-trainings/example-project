@@ -19,7 +19,8 @@ spec:
           image: ghcr.io/kafka-trainings/example-project/csp1_producer:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - name: jmx
+              containerPort: 3011
           volumeMounts:
             - name: config
               mountPath: /app/app.properties

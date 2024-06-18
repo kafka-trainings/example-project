@@ -1,26 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: csp1-consumer
+  name: dashboard
   labels:
-    app: csp1-consumer
+    app: dashboard
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: csp1-consumer
+      app: dashboard
   template:
     metadata:
       labels:
-        app: csp1-consumer
+        app: dashboard
     spec:
       containers:
-        - name: csp1-consumer
-          image: ghcr.io/kafka-trainings/example-project/csp1_consumer:latest
+        - name: dashboard
+          image: ghcr.io/kafka-trainings/example-project/dashboard:latest
           imagePullPolicy: Always
           ports:
+            - containerPort: 9999
+              name: dashboard-metrics
             - name: jmx
-              containerPort: 3012
+              containerPort: 3031
           volumeMounts:
             - name: config
               mountPath: /app/app.properties
@@ -28,16 +30,15 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: csp1-consumer-config
+            name: dashboard-config
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: csp1-consumer-config
+  name: dashboard-config
 data:
   app.properties: |
     bootstrap.servers=my-cluster-kafka-bootstrap:9092
-    topic=csp1_transactions
-    group.id=csp1_consumer
-    app.log.infos=true
-    client.id=csp1_consumer
+    application.id=dashboard
+    transactions.topic=transactions
+    web.port=9999

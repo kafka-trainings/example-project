@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: csp1-consumer
+  name: csp2-producer
   labels:
-    app: csp1-consumer
+    app: csp2-producer
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: csp1-consumer
+      app: csp2-producer
   template:
     metadata:
       labels:
-        app: csp1-consumer
+        app: csp2-producer
     spec:
       containers:
-        - name: csp1-consumer
-          image: ghcr.io/kafka-trainings/example-project/csp1_consumer:latest
+        - name: csp2-producer
+          image: ghcr.io/kafka-trainings/example-project/csp2_producer:latest
           imagePullPolicy: Always
           ports:
             - name: jmx
-              containerPort: 3012
+              containerPort: 3021
           volumeMounts:
             - name: config
               mountPath: /app/app.properties
@@ -28,16 +28,17 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: csp1-consumer-config
+            name: csp2-producer-config
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: csp1-consumer-config
+  name: csp2-producer-config
 data:
   app.properties: |
     bootstrap.servers=my-cluster-kafka-bootstrap:9092
-    topic=csp1_transactions
-    group.id=csp1_consumer
+    topic=csp2_transactions
+    producer.batch_interval.s=10
+    producer.msgs_per_batch=100
     app.log.infos=true
-    client.id=csp1_consumer
+    client.id=csp2_producer

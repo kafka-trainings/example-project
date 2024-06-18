@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csp2-transformer
+  labels:
+    app: csp2-transformer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csp2-transformer
+  template:
+    metadata:
+      labels:
+        app: csp2-transformer
+    spec:
+      containers:
+        - name: csp2-transformer
+          image: ghcr.io/kafka-trainings/example-project/csp2_transformer:latest
+          imagePullPolicy: Always
+          ports:
+            - name: jmx
+              containerPort: 3022
+          volumeMounts:
+            - name: config
+              mountPath: /app/app.properties
+              subPath: app.properties
+      volumes:
+        - name: config
+          configMap:
+            name: csp2-transformer-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: csp2-transformer-config
+data:
+  app.properties: |
+    bootstrap.servers=my-cluster-kafka-bootstrap:9092
+    application.id=csp2-transformer2
+    csp2.transactions.topic=csp2_transactions
+    csp2.customer_id_mapping.topic=csp2_customer_id_mapping
+    csp2.chargingstation_id_mapping.topic=csp2_chargingstation_id_mapping
+    output.topic=transactions
+    processing.time.ms=100
+    app.log.infos=true
+    client.id=csp2_transformer

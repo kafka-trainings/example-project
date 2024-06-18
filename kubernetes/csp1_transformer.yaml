@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: csp1-consumer
+  name: csp1-transformer
   labels:
-    app: csp1-consumer
+    app: csp1-transformer
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: csp1-consumer
+      app: csp1-transformer
   template:
     metadata:
       labels:
-        app: csp1-consumer
+        app: csp1-transformer
     spec:
       containers:
-        - name: csp1-consumer
-          image: ghcr.io/kafka-trainings/example-project/csp1_consumer:latest
+        - name: csp1-transformer
+          image: ghcr.io/kafka-trainings/example-project/csp1_transformer:latest
           imagePullPolicy: Always
           ports:
             - name: jmx
-              containerPort: 3012
+              containerPort: 3013
           volumeMounts:
             - name: config
               mountPath: /app/app.properties
@@ -28,16 +28,20 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: csp1-consumer-config
+            name: csp1-transformer-config
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: csp1-consumer-config
+  name: csp1-transformer-config
 data:
   app.properties: |
     bootstrap.servers=my-cluster-kafka-bootstrap:9092
-    topic=csp1_transactions
-    group.id=csp1_consumer
+    csp1.topic=csp1_transactions
+    output.topic=transactions
+    producer.msgs.per.sec=1
+    group.id=csp1_transformer
+    transactional.id=transactions-transformer-app
+    processing.time.ms=1000
     app.log.infos=true
-    client.id=csp1_consumer
+    client.id=csp1_transformer
