@@ -17,6 +17,7 @@ spec:
       containers:
         - name: csp1-producer
           image: ghcr.io/kafka-trainings/example-project/csp1_producer:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           volumeMounts:
