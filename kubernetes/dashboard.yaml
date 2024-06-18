@@ -20,7 +20,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 9999
-              name: dashboard-metrics
+              name: dashboard
             - name: jmx
               containerPort: 3031
           volumeMounts:
