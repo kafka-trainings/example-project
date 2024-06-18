@@ -22,7 +22,7 @@ public class Main {
         final Properties consumerProps = new Properties();
         final Properties producerProps = new Properties();
         String configFile = "csp1_transformer.properties";
-        if(args.length == 1) {
+        if (args.length == 1) {
             configFile = args[0];
         }
         consumerProps.load(new FileReader(configFile));
@@ -53,10 +53,9 @@ public class Main {
                 while (true) {
                     ConsumerRecords<String, CSP1Transaction> records = consumer.poll(Duration.ofMillis(100));
 
-                    producer.beginTransaction();
-                    HashMap<TopicPartition, OffsetAndMetadata> offsets = new HashMap<>();
-
                     for (ConsumerRecord<String, CSP1Transaction> record : records) {
+                        producer.beginTransaction();
+                        HashMap<TopicPartition, OffsetAndMetadata> offsets = new HashMap<>();
                         CSP1Transaction csp1Transaction = record.value();
                         offsets.put(new TopicPartition(record.topic(), record.partition()),
                                 new OffsetAndMetadata(record.offset() + 1));
@@ -72,12 +71,12 @@ public class Main {
                         ProducerRecord<String, Transaction> transactionRecord =
                                 new ProducerRecord<>(OUTPUT_TOPIC, transaction.customerId, transaction);
                         producer.send(transactionRecord);
-                        if(logInfos) {
+                        if (logInfos) {
                             System.out.println("Processed message for customer " + transaction.customerId);
                         }
+                        producer.sendOffsetsToTransaction(offsets, consumerGroupMetadata);
+                        producer.commitTransaction();
                     }
-                    producer.sendOffsetsToTransaction(offsets, consumerGroupMetadata);
-                    producer.commitTransaction();
                 }
             }
         }

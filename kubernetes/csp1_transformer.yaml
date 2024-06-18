@@ -39,7 +39,6 @@ data:
     bootstrap.servers=my-cluster-kafka-bootstrap:9092
     csp1.topic=csp1_transactions
     output.topic=transactions
-    producer.msgs.per.sec=1
     group.id=csp1_transformer
     transactional.id=transactions-transformer-app
     processing.time.ms=1000
