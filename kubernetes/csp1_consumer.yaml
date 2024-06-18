@@ -22,6 +22,7 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /app/app.properties
+              subPath: app.properties
       volumes:
         - name: config
           configMap:
