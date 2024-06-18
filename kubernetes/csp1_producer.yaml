@@ -33,7 +33,7 @@ metadata:
   name: csp1-producer-config
 data:
   app.properties: |
-    bootstrap.servers=broker:9092
+    bootstrap.servers=my-cluster-kafka-bootstrap:9092
     topic=csp1_transactions
     producer.msgs.per.sec=1
     app.log.infos=true
