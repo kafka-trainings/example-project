@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csp1-consumer
+  labels:
+    app: csp1-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csp1-consumer
+  template:
+    metadata:
+      labels:
+        app: csp1-consumer
+    spec:
+      containers:
+        - name: csp1-consumer
+          image: ghcr.io/kafka-trainings/example-project/csp1_consumer:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config
+              mountPath: /app/app.properties
+      volumes:
+        - name: config
+          configMap:
+            name: csp1-consumer-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: csp1-consumer-config
+data:
+  app.properties: |
+    bootstrap.servers=broker:9092
+    topic=csp1_transactions
+    group.id=csp1_consumer
+    app.log.infos=true
+    client.id=csp1_consumer

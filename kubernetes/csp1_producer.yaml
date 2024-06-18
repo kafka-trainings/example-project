@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csp1-producer
+  labels:
+    app: csp1-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csp1-producer
+  template:
+    metadata:
+      labels:
+        app: csp1-producer
+    spec:
+      containers:
+        - name: csp1-producer
+          image: ghcr.io/kafka-trainings/example-project/csp1_producer:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config
+              mountPath: /app/app.properties
+      volumes:
+        - name: config
+          configMap:
+            name: csp1-producer-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: csp1-producer-config
+data:
+  app.properties: |
+    bootstrap.servers=broker:9092
+    topic=csp1_transactions
+    producer.msgs.per.sec=1
+    app.log.infos=true
+    client.id=csp1_producer

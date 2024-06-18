@@ -20,20 +20,11 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      # need to repeat the build for following directories:
-        # - csp1_producer
-        # - csp1_consumer
-        # - csp1_transformer
-        # - csp2_producer
-        # - csp2_transformer
-        # - dashboard
-
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - name: Build and push csp1_producer
+      - name: Build and push everything
         run: |
           cd csp1_producer
-          # todo: 
           for DIR in csp2_transformer csp1_producer csp1_consumer csp1_transformer csp2_producer  dashboard ;do
             IMAGE_NAME=$PROJECT/$DIR
             IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
