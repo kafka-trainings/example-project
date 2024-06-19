@@ -37,7 +37,7 @@ metadata:
 data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9092
-    topic=csp2_transactions
+    topic=csp2.transactions
     producer.batch_interval.s=10
     producer.msgs_per_batch=100
     app.log.infos=true

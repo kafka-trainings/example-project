@@ -37,7 +37,7 @@ metadata:
 data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9092
-    topic=csp1_transactions
+    topic=csp1.transactions
     group.id=csp1_consumer
     app.log.infos=true
     client.id=csp1_consumer

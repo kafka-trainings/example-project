@@ -38,9 +38,9 @@ data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9092
     application.id=csp2-transformer2
-    csp2.transactions.topic=csp2_transactions
-    csp2.customer_id_mapping.topic=csp2_customer_id_mapping
-    csp2.chargingstation_id_mapping.topic=csp2_chargingstation_id_mapping
+    csp2.transactions.topic=csp2.transactions
+    csp2.customer_id_mapping.topic=csp2.customer.id.mapping
+    csp2.chargingstation_id_mapping.topic=csp2.chargingstation.id.mapping
     output.topic=transactions
     processing.time.ms=100
     app.log.infos=true
