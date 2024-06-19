@@ -36,7 +36,7 @@ metadata:
   name: csp2-producer-config
 data:
   app.properties: |
-    bootstrap.servers=my-cluster-kafka-bootstrap:9092
+    bootstrap.servers=kafka-kafka-bootstrap:9092
     topic=csp2_transactions
     producer.batch_interval.s=10
     producer.msgs_per_batch=100

@@ -36,7 +36,7 @@ metadata:
   name: csp2-transformer-config
 data:
   app.properties: |
-    bootstrap.servers=my-cluster-kafka-bootstrap:9092
+    bootstrap.servers=kafka-kafka-bootstrap:9092
     application.id=csp2-transformer2
     csp2.transactions.topic=csp2_transactions
     csp2.customer_id_mapping.topic=csp2_customer_id_mapping

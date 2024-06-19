@@ -36,7 +36,7 @@ metadata:
   name: csp1-consumer-config
 data:
   app.properties: |
-    bootstrap.servers=my-cluster-kafka-bootstrap:9092
+    bootstrap.servers=kafka-kafka-bootstrap:9092
     topic=csp1_transactions
     group.id=csp1_consumer
     app.log.infos=true

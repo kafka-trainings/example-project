@@ -38,7 +38,7 @@ metadata:
   name: dashboard-config
 data:
   app.properties: |
-    bootstrap.servers=my-cluster-kafka-bootstrap:9092
+    bootstrap.servers=kafka-kafka-bootstrap:9092
     application.id=dashboard
     transactions.topic=transactions
     web.port=9999
