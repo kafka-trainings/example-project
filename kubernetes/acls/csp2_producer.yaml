@@ -12,7 +12,7 @@ spec:
     acls:
       - resource:
           type: topic
-          name: csp2-transactions
+          name: csp2.transactions
           patternType: literal
         operations:
           - Write
