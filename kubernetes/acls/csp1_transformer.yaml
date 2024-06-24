@@ -112,7 +112,7 @@ data:
     bootstrap.servers=kafka-kafka-bootstrap:9093
     csp1.topic=csp1.transactions
     output.topic=transactions
-    group.id=csp1_transformer
+    group.id=csp1-transformer
     transactional.id=transactions-transformer-app
     processing.time.ms=1000
     app.log.infos=true
