@@ -18,7 +18,7 @@ spec:
         host: "*"
       - resource:
           type: topic
-          name: csp1-transactions
+          name: csp1.transactions
           patternType: literal
         operations:
           - Read
@@ -87,7 +87,7 @@ metadata:
 data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9093
-    topic=csp-transactions
+    topic=csp1.transactions
     group.id=csp1_consumer
     app.log.infos=true
     client.id=csp1_consumer

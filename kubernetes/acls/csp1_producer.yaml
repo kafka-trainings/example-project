@@ -12,7 +12,7 @@ spec:
     acls:
       - resource:
           type: topic
-          name: csp-transactions
+          name: csp1-transactions
           patternType: literal
         operations:
           - Write
@@ -83,7 +83,7 @@ metadata:
 data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9093
-    topic=csp-transactions
+    topic=csp1.transactions
     producer.msgs.per.sec=1
     app.log.infos=true
     client.id=csp1_producer
