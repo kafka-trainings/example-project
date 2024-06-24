@@ -30,6 +30,12 @@ spec:
         operations:
           - Describe
           - Write
+      - resource:
+          type: cluster
+          name: kafka-cluster
+          patternType: literal
+        operations:
+          - IdempotentWrite
 ---
 apiVersion: apps/v1
 kind: Deployment
