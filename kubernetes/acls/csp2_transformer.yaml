@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  name: csp-transformer
+  name: csp2-transformer
   labels:
     strimzi.io/cluster: kafka
 spec:
@@ -12,7 +12,7 @@ spec:
     acls:
       - resource:
           type: group
-          name: csp-transformer
+          name: csp2-transformer
           patternType: literal
         operation: Read
         host: "*"
@@ -69,7 +69,7 @@ spec:
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: csp-transformer
+                  name: csp2-transformer
                   key: user.password
             - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
               valueFrom:
@@ -79,7 +79,7 @@ spec:
       volumes:
         - name: user-certs
           secret:
-            secretName: csp-transformer
+            secretName: csp2-transformer
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
