@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  name: csp1_consumer
+  name: csp1.consumer
   labels:
     strimzi.io/cluster: kafka
 spec:
@@ -12,7 +12,7 @@ spec:
     acls:
       - resource:
           type: group
-          name: csp1_consumer
+          name: csp1-consumer
           patternType: literal
         operation: Read
         host: "*"
@@ -59,11 +59,11 @@ spec:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: kafka-kafka-bootstrap:9093
             - name: KAFKA_GROUP_ID
-              value: csp1_consumer
+              value: csp1-consumer
             - name: KAFKA_TOPIC
               value: csp1.transactions
             - name: KAFKA_CLIENT_ID
-              value: csp1_consumer
+              value: csp1-consumer
             - name: KAFKA_APP_LOG_INFOS
               value: "true"
             # SSL Configs
@@ -72,7 +72,7 @@ spec:
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: csp1_consumer
+                  name: csp1-consumer
                   key: user.password
             - name: KAFKA_SSL_KEYSTORE_LOCATION
               value: /tls/user.p12
@@ -86,7 +86,7 @@ spec:
       volumes:
         - name: user-certs
           secret:
-            secretName: csp1_consumer
+            secretName: csp1.consumer
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
