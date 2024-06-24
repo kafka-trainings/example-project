@@ -88,9 +88,9 @@ data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9093
     topic=csp1.transactions
-    group.id=csp1_consumer
+    group.id=csp1-consumer
     app.log.infos=true
-    client.id=csp1_consumer
+    client.id=csp1-consumer
     security.protocol=SSL
     ssl.keystore.location=/tls/user.p12
     ssl.truststore.location=/tls/ca.p12
