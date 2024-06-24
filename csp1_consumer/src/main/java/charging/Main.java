@@ -7,16 +7,30 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(final String[] args) throws IOException, InterruptedException {
         final Properties props = new Properties();
-        String configFile = "csp1_consumer.properties";
         if (args.length == 1) {
-            configFile = args[0];
+            props.load(new FileReader(args[0]));
         }
-        props.load(new FileReader(configFile));
+        // Load from environment variables
+        props.putAll(System.getenv()
+                .entrySet()
+                .stream()
+                .filter(mapEntry -> mapEntry.getKey().startsWith("KAFKA_"))
+                .collect(Collectors.toMap(
+                        mapEntry -> {
+                            String envVar = mapEntry.getKey();
+                            return envVar.substring(envVar.indexOf("_") + 1).toLowerCase(Locale.ENGLISH).replace("_", ".");
+                        },
+                        Map.Entry::getValue)));
+
+        System.out.println("Properties: " + props);
         // What do you need to configure here?
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CSP1TransactionDeserializer.class);

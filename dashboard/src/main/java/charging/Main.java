@@ -11,20 +11,33 @@ import org.apache.kafka.streams.state.KeyValueStore;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 import static charging.Server.*;
 
 public class Main {
     public static void main(final String[] args) throws IOException {
-
         final Properties props = new Properties();
-        String configFile = "dashboard.properties";
-        if(args.length == 1) {
-            configFile = args[0];
+        if (args.length == 1) {
+            props.load(new FileReader(args[0]));
         }
-        props.load(new FileReader(configFile));
+        // Load from environment variables
+        props.putAll(System.getenv()
+                .entrySet()
+                .stream()
+                .filter(mapEntry -> mapEntry.getKey().startsWith("KAFKA_"))
+                .collect(Collectors.toMap(
+                        mapEntry -> {
+                            String envVar = mapEntry.getKey();
+                            return envVar.substring(envVar.indexOf("_") + 1).toLowerCase(Locale.ENGLISH).replace("_", ".");
+                        },
+                        Map.Entry::getValue)));
+
+        System.out.println("Properties: " + props);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         int port = Integer.parseInt(props.getProperty("web.port"));

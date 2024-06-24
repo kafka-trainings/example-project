@@ -12,21 +12,37 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(final String[] args) throws IOException, InterruptedException {
 
-        final Properties consumerProps = new Properties();
-        final Properties producerProps = new Properties();
-        String configFile = "csp1_transformer.properties";
+        final Properties props = new Properties();
         if (args.length == 1) {
-            configFile = args[0];
+            props.load(new FileReader(args[0]));
         }
-        consumerProps.load(new FileReader(configFile));
-        producerProps.load(new FileReader(configFile));
+        // Load from environment variables
+        props.putAll(System.getenv()
+                .entrySet()
+                .stream()
+                .filter(mapEntry -> mapEntry.getKey().startsWith("KAFKA_"))
+                .collect(Collectors.toMap(
+                        mapEntry -> {
+                            String envVar = mapEntry.getKey();
+                            return envVar.substring(envVar.indexOf("_") + 1).toLowerCase(Locale.ENGLISH).replace("_", ".");
+                        },
+                        Map.Entry::getValue)));
+
+        System.out.println("Properties: " + props);
+
+        // copy from Props
+        final Properties consumerProps = new Properties();
+        consumerProps.putAll(props);
+        final Properties producerProps = new Properties();
+        producerProps.putAll(props);
+
+
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CSP1TransactionDeserializer.class);
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");

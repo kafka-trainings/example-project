@@ -1,0 +1,107 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: csp2_transformer
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: group
+          name: csp2_transformer
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: csp2
+          patternType: prefix
+        operations:
+          - All
+        host: "*"
+      - resource:
+          type: transactionalId
+          name: csp
+          patternType: prefix
+        operations:
+          - Describe
+          - Write
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csp2-transformer
+  labels:
+    app: csp2-transformer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csp2-transformer
+  template:
+    metadata:
+      labels:
+        app: csp2-transformer
+    spec:
+      containers:
+        - name: csp2-transformer
+          image: ghcr.io/kafka-trainings/example-project/csp2_transformer:latest
+          imagePullPolicy: Always
+          ports:
+            - name: jmx
+              containerPort: 3022
+          volumeMounts:
+            - name: user-certs
+              mountPath: /tls/user.p12
+              subPath: user.p12
+            - name: cluster-certs
+              mountPath: /tls/ca.p12
+              subPath: ca.p12
+          env:
+            # Replace ConfigMap by Environment
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-kafka-bootstrap:9093
+            - name: KAFKA_APPLICATION_ID
+              value: csp2-transformer
+            - name: KAFKA_CSP2_TRANSACTIONS_TOPIC
+              value: csp2.transactions
+            - name: KAFKA_CSP2_CUSTOMER_ID_MAPPING_TOPIC
+              value: csp2.customer.id.mapping
+            - name: KAFKA_CSP2_CHARGINGSTATION_ID_MAPPING_TOPIC
+              value: csp2.chargingstation.id.mapping
+            - name: KAFKA_CLIENT_ID
+              value: csp2_transformer
+            - name: KAFKA_APP_LOG_INFOS
+              value: "true"
+            - name: KAFKA_OUTPUT_TOPIC
+              value: transactions
+            - name: KAFKA_PROCESSING_TIME_MS
+              value: "1000"
+            # SSL Configs
+            - name: KAFKA_SECURITY_PROTOCOL
+              value: SSL
+            - name: KAFKA_SSL_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: csp2_transformer
+                  key: user.password
+            - name: KAFKA_SSL_KEYSTORE_LOCATION
+              value: /tls/user.p12
+            - name: KAFKA_SSL_TRUSTSTORE_LOCATION
+              value: /tls/ca.p12
+            - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-cluster-ca-cert
+                  key: ca.password
+      volumes:
+        - name: user-certs
+          secret:
+            secretName: csp2_transformer
+        - name: cluster-certs
+          secret:
+            secretName: kafka-cluster-ca-cert

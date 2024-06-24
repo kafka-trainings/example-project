@@ -1,0 +1,92 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: csp1_consumer
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: group
+          name: csp1_consumer
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: csp1.transactions
+          patternType: literal
+        operations:
+          - Read
+        host: "*"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csp1-consumer
+  labels:
+    app: csp1-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csp1-consumer
+  template:
+    metadata:
+      labels:
+        app: csp1-consumer
+    spec:
+      containers:
+        - name: csp1-consumer
+          image: ghcr.io/kafka-trainings/example-project/csp1_consumer:latest
+          imagePullPolicy: Always
+          ports:
+            - name: jmx
+              containerPort: 3012
+          volumeMounts:
+            - name: user-certs
+              mountPath: /tls/user.p12
+              subPath: user.p12
+            - name: cluster-certs
+              mountPath: /tls/ca.p12
+              subPath: ca.p12
+          env:
+            # Replace ConfigMap by Environment
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-kafka-bootstrap:9093
+            - name: KAFKA_GROUP_ID
+              value: csp1_consumer
+            - name: KAFKA_TOPIC
+              value: csp1.transactions
+            - name: KAFKA_CLIENT_ID
+              value: csp1_consumer
+            - name: KAFKA_APP_LOG_INFOS
+              value: "true"
+            # SSL Configs
+            - name: KAFKA_SECURITY_PROTOCOL
+              value: SSL
+            - name: KAFKA_SSL_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: csp1_consumer
+                  key: user.password
+            - name: KAFKA_SSL_KEYSTORE_LOCATION
+              value: /tls/user.p12
+            - name: KAFKA_SSL_TRUSTSTORE_LOCATION
+              value: /tls/ca.p12
+            - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-cluster-ca-cert
+                  key: ca.password
+      volumes:
+        - name: user-certs
+          secret:
+            secretName: csp1_consumer
+        - name: cluster-certs
+          secret:
+            secretName: kafka-cluster-ca-cert
