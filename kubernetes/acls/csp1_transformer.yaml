@@ -114,3 +114,6 @@ data:
     processing.time.ms=1000
     app.log.infos=true
     client.id=csp1_transformer
+    security.protocol=SSL
+    ssl.keystore.location=/tls/user.p12
+    ssl.truststore.location=/tls/ca.p12

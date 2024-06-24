@@ -105,3 +105,6 @@ data:
     application.id=dashboard
     transactions.topic=transactions
     web.port=9999
+    security.protocol=SSL
+    ssl.keystore.location=/tls/user.p12
+    ssl.truststore.location=/tls/ca.p12

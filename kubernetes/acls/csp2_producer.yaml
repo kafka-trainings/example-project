@@ -23,6 +23,7 @@ spec:
           patternType: literal
         operations:
           - IdempotentWrite
+        host: "*"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -92,3 +93,6 @@ data:
     producer.msgs_per_batch=100
     app.log.infos=true
     client.id=csp2_producer
+    security.protocol=SSL
+    ssl.keystore.location=/tls/user.p12
+    ssl.truststore.location=/tls/ca.p12
