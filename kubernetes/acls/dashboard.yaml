@@ -42,16 +42,19 @@ kind: Deployment
 metadata:
   name: dashboard
   labels:
-    app: dashboard
+    app: example-project
+    component: dashboard
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dashboard
+      app: example-project
+      component: dashboard
   template:
     metadata:
       labels:
-        app: dashboard
+        app: example-project
+        component: dashboard
     spec:
       containers:
         - name: dashboard

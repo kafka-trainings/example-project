@@ -29,16 +29,19 @@ kind: Deployment
 metadata:
   name: csp1-consumer
   labels:
-    app: csp1-consumer
+    app: example-project
+    component: csp1-consumer
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: csp1-consumer
+      app: example-project
+      component: csp1-consumer
   template:
     metadata:
       labels:
-        app: csp1-consumer
+        app: example-project
+        component: csp1-consumer
     spec:
       containers:
         - name: csp1-consumer

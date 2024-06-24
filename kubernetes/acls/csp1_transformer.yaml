@@ -49,16 +49,19 @@ kind: Deployment
 metadata:
   name: csp1-transformer
   labels:
-    app: csp1-transformer
+    app: example-project
+    component: csp1-transformer
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: csp1-transformer
+      app: example-project
+      component: csp1-transformer
   template:
     metadata:
       labels:
-        app: csp1-transformer
+        app: example-project
+        component: csp1-transformer
     spec:
       containers:
         - name: csp1-transformer
