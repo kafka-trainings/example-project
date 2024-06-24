@@ -69,31 +69,16 @@ spec:
             - name: cluster-certs
               mountPath: /tls/ca.p12
               subPath: ca.p12
+            - name: config
+              mountPath: /app/app.properties
+              subPath: app.properties
           env:
-            # Replace ConfigMap by Environment
-
-              # transactions.topic=transactions
-              # web.port=9999
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-kafka-bootstrap:9093
-            - name: KAFKA_APPLICATION_ID
-              value: dashboard
-            - name: KAFKA_CLIENT_ID
-              value: dashboard
-            - name: KAFKA_TRANSACTIONS_TOPIC
-              value: transactions
             # SSL Configs
-            - name: KAFKA_SECURITY_PROTOCOL
-              value: SSL
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: dashboard
                   key: user.password
-            - name: KAFKA_SSL_KEYSTORE_LOCATION
-              value: /tls/user.p12
-            - name: KAFKA_SSL_TRUSTSTORE_LOCATION
-              value: /tls/ca.p12
             - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -106,3 +91,17 @@ spec:
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
+        - name: config
+          configMap:
+            name: dashboard-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboard-config
+data:
+  app.properties: |
+    bootstrap.servers=kafka-kafka-bootstrap:9093
+    application.id=dashboard
+    transactions.topic=transactions
+    web.port=9999

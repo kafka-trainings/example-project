@@ -48,32 +48,16 @@ spec:
             - name: cluster-certs
               mountPath: /tls/ca.p12
               subPath: ca.p12
+            - name: config
+              mountPath: /app/app.properties
+              subPath: app.properties
           env:
-            # Replace ConfigMap by Environment
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-kafka-bootstrap:9093
-            - name: KAFKA_TOPIC
-              value: csp2.transactions
-            - name: KAFKA_PRODUCER_BATCH_INTERVAL_S
-              value: "10"
-            - name: KAFKA_PRODUCER_MSGS_PER_BATCH
-              value: "100"
-            - name: KAFKA_CLIENT_ID
-              value: csp2.producer
-            - name: KAFKA_APP_LOG_INFOS
-              value: "true"
             # SSL Configs
-            - name: KAFKA_SECURITY_PROTOCOL
-              value: SSL
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: csp2.producer
                   key: user.password
-            - name: KAFKA_SSL_KEYSTORE_LOCATION
-              value: /tls/user.p12
-            - name: KAFKA_SSL_TRUSTSTORE_LOCATION
-              value: /tls/ca.p12
             - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -86,3 +70,19 @@ spec:
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
+        - name: config
+          configMap:
+            name: csp2-producer-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: csp2-producer-config
+data:
+  app.properties: |
+    bootstrap.servers=kafka-kafka-bootstrap:9093
+    topic=csp2.transactions
+    producer.batch_interval.s=10
+    producer.msgs_per_batch=100
+    app.log.infos=true
+    client.id=csp2_producer

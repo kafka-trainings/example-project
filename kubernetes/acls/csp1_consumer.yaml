@@ -54,30 +54,16 @@ spec:
             - name: cluster-certs
               mountPath: /tls/ca.p12
               subPath: ca.p12
+            - name: config
+              mountPath: /app/app.properties
+              subPath: app.properties
           env:
-            # Replace ConfigMap by Environment
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-kafka-bootstrap:9093
-            - name: KAFKA_GROUP_ID
-              value: csp1-consumer
-            - name: KAFKA_TOPIC
-              value: csp1.transactions
-            - name: KAFKA_CLIENT_ID
-              value: csp1-consumer
-            - name: KAFKA_APP_LOG_INFOS
-              value: "true"
             # SSL Configs
-            - name: KAFKA_SECURITY_PROTOCOL
-              value: SSL
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: csp1-consumer
                   key: user.password
-            - name: KAFKA_SSL_KEYSTORE_LOCATION
-              value: /tls/user.p12
-            - name: KAFKA_SSL_TRUSTSTORE_LOCATION
-              value: /tls/ca.p12
             - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -90,3 +76,21 @@ spec:
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
+        - name: config
+          configMap:
+            name: csp1-consumer-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: csp1-consumer-config
+data:
+  app.properties: |
+    bootstrap.servers=kafka-kafka-bootstrap:9093
+    topic=csp1.transactions
+    group.id=csp1_consumer
+    app.log.infos=true
+    client.id=csp1_consumer
+    security.protocol=SSL
+    ssl.keystore.location=/tls/user.p12
+    ssl.truststore.location=/tls/ca.p12
