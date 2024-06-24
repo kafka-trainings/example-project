@@ -72,7 +72,7 @@ spec:
       volumes:
         - name: user-certs
           secret:
-            secretName: csp-consumer
+            secretName: csp1-consumer
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
