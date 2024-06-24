@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  name: csp2.producer
+  name: csp-producer
   labels:
     strimzi.io/cluster: kafka
 spec:
@@ -12,7 +12,7 @@ spec:
     acls:
       - resource:
           type: topic
-          name: csp2.transactions
+          name: csp-transactions
           patternType: literal
         operations:
           - Write
@@ -56,7 +56,7 @@ spec:
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: csp2.producer
+                  name: csp-producer
                   key: user.password
             - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
               valueFrom:
@@ -66,7 +66,7 @@ spec:
       volumes:
         - name: user-certs
           secret:
-            secretName: csp2.producer
+            secretName: csp-producer
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
@@ -81,7 +81,7 @@ metadata:
 data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9093
-    topic=csp2.transactions
+    topic=csp-transactions
     producer.batch_interval.s=10
     producer.msgs_per_batch=100
     app.log.infos=true

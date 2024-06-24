@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  name: csp1.transformer
+  name: csp-transformer
   labels:
     strimzi.io/cluster: kafka
 spec:
@@ -12,13 +12,13 @@ spec:
     acls:
       - resource:
           type: group
-          name: csp1.transformer
+          name: csp-transformer
           patternType: literal
         operation: Read
         host: "*"
       - resource:
           type: topic
-          name: csp1.transactions
+          name: csp-transactions
           patternType: literal
         operations:
           - Read
@@ -76,7 +76,7 @@ spec:
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: csp1.producer
+                  name: csp-producer
                   key: user.password
             - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
               valueFrom:
@@ -86,7 +86,7 @@ spec:
       volumes:
         - name: user-certs
           secret:
-            secretName: csp1.producer
+            secretName: csp-producer
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
@@ -101,7 +101,7 @@ metadata:
 data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9093
-    csp1.topic=csp1.transactions
+    csp1.topic=csp1-transactions
     output.topic=transactions
     group.id=csp1_transformer
     transactional.id=transactions-transformer-app

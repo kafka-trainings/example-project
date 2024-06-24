@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  name: csp2.transformer
+  name: csp-transformer
   labels:
     strimzi.io/cluster: kafka
 spec:
@@ -12,7 +12,7 @@ spec:
     acls:
       - resource:
           type: group
-          name: csp2.transformer
+          name: csp-transformer
           patternType: literal
         operation: Read
         host: "*"
@@ -69,7 +69,7 @@ spec:
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: csp2.transformer
+                  name: csp-transformer
                   key: user.password
             - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
               valueFrom:
@@ -79,7 +79,7 @@ spec:
       volumes:
         - name: user-certs
           secret:
-            secretName: csp2.transformer
+            secretName: csp-transformer
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
@@ -95,9 +95,9 @@ data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9093
     application.id=csp2-transformer2
-    csp2.transactions.topic=csp2.transactions
-    csp2.customer_id_mapping.topic=csp2.customer.id.mapping
-    csp2.chargingstation_id_mapping.topic=csp2.chargingstation.id.mapping
+    csp2.transactions.topic=csp-transactions
+    csp2.customer_id_mapping.topic=csp-customer.id.mapping
+    csp2.chargingstation_id_mapping.topic=csp-chargingstation.id.mapping
     output.topic=transactions
     processing.time.ms=100
     app.log.infos=true

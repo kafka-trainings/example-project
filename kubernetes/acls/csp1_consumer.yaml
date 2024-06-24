@@ -18,7 +18,7 @@ spec:
         host: "*"
       - resource:
           type: topic
-          name: csp1.transactions
+          name: csp1-transactions
           patternType: literal
         operations:
           - Read
@@ -72,7 +72,7 @@ spec:
       volumes:
         - name: user-certs
           secret:
-            secretName: csp1.consumer
+            secretName: csp-consumer
         - name: cluster-certs
           secret:
             secretName: kafka-cluster-ca-cert
@@ -87,7 +87,7 @@ metadata:
 data:
   app.properties: |
     bootstrap.servers=kafka-kafka-bootstrap:9093
-    topic=csp1.transactions
+    topic=csp-transactions
     group.id=csp1_consumer
     app.log.infos=true
     client.id=csp1_consumer
