@@ -30,15 +30,18 @@ metadata:
   name: csp1-producer
   labels:
     app: example-project
+    component: csp1-producer
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: example-project
+      component: csp1-producer
   template:
     metadata:
       labels:
         app: example-project
+        component: csp1-producer
     spec:
       containers:
         - name: csp1-producer

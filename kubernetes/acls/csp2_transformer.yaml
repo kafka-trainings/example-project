@@ -43,15 +43,18 @@ metadata:
   name: csp2-transformer
   labels:
     app: example-project
+    component: csp2-transformer
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: example-project
+      component: csp2-transformer
   template:
     metadata:
       labels:
         app: example-project
+        component: csp2-transformer
     spec:
       containers:
         - name: csp2-transformer
