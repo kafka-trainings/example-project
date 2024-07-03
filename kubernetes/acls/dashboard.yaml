@@ -43,18 +43,15 @@ metadata:
   name: dashboard
   labels:
     app: example-project
-    component: dashboard
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: example-project
-      component: dashboard
   template:
     metadata:
       labels:
         app: example-project
-        component: dashboard
     spec:
       containers:
         - name: dashboard

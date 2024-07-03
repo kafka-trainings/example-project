@@ -30,18 +30,15 @@ metadata:
   name: csp1-consumer
   labels:
     app: example-project
-    component: csp1-consumer
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: example-project
-      component: csp1-consumer
   template:
     metadata:
       labels:
         app: example-project
-        component: csp1-consumer
     spec:
       containers:
         - name: csp1-consumer
