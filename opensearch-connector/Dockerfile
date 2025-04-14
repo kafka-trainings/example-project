@@ -9,5 +9,5 @@ RUN wget https://github.com/Aiven-Open/opensearch-connector-for-apache-kafka/arc
 FROM quay.io/strimzi/kafka:latest-kafka-3.7.0
 USER root:root
 # Add the connector
-COPY --from=builder /home/gradle/opensearch-connector-for-apache-kafka-3.1.1/build/install/opensearch-connector-for-apache-kafka/ /opt/kafka/libs/opensearch-connector-for-apache-kafka
+COPY --from=builder /home/gradle/opensearch-connector-for-apache-kafka-3.1.1/build/install/opensearch-connector-for-apache-kafka/ /opt/kafka/plugins/opensearch-connector-for-apache-kafka
 USER 1001
