@@ -1,0 +1,41 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  name: csp1.transactions
+spec:
+  partitionCount: 12
+  replicas: 3
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  name: transactions
+spec:
+  partitionCount: 12
+  replicas: 3
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  name: csp2.transactions
+spec:
+  partitionCount: 12
+  replicas: 3
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  name: csp2.customer.id.mapping
+spec:
+  partitionCount: 12
+  replicas: 3
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  name: csp2.chargingstation.id.mapping
+spec:
+  partitionCount: 12
+  replicas: 3
+---
+
